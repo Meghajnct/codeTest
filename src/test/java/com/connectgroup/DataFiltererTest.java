@@ -12,41 +12,87 @@ import static org.junit.Assert.assertTrue;
 
 public class DataFiltererTest {
     @Test
-    public void shouldReturnEmptyCollection_WhenLogFileIsEmpty() throws FileNotFoundException {
+    public void shouldReturnEmptyCollection_ByCountry_WhenLogFileIsEmpty() throws FileNotFoundException {
         assertTrue(DataFilterer.filterByCountry(openFile("src/test/resources/empty"), "GB").isEmpty());
-        assertTrue(DataFilterer.filterByCountryWithResponseTimeAboveLimit(openFile("src/test/resources/empty"), "GB", 400).isEmpty());
-        assertTrue(DataFilterer.filterByResponseTimeAboveAverage(openFile("src/test/resources/empty")).isEmpty());
 
     }
 
     @Test
-    public void shouldReturnSinglaDataCollection_WhenLogFileIsSingleLine() throws FileNotFoundException {
+    public void shouldReturnFilteredData_ByCountry_WhenLogFileIsSingleLine() throws FileNotFoundException {
         List<String> expected = new ArrayList<>();
         expected.add("1431592497,GB,200");
         assertTrue(DataFilterer.filterByCountry(openFile("src/test/resources/single-line"), "GB").containsAll(expected));
-        assertTrue(DataFilterer.filterByCountryWithResponseTimeAboveLimit(openFile("src/test/resources/single-line"), "GB", 100).containsAll(expected));
-        assertTrue(DataFilterer.filterByResponseTimeAboveAverage(openFile("src/test/resources/single-line")).isEmpty());
 
     }
 
     @Test
-    public void shouldReturnDataCollection_WhenLogFileHaveData() throws FileNotFoundException {
+    public void shouldReturnEmpty_ByCountry_WhenLogFileIsSingleLine() throws FileNotFoundException {
+        assertTrue(DataFilterer.filterByCountry(openFile("src/test/resources/single-line"), "TB").isEmpty());
+
+    }
+
+    @Test
+    public void shouldReturnFilteredData_ByCountry_WhenLogFileIsMultiLine() throws FileNotFoundException {
         List<String> expected = new ArrayList<>();
         expected.add("1433190845,US,539");
         expected.add("1433666287,US,789");
         expected.add("1432484176,US,850");
         assertTrue((DataFilterer.filterByResponseTimeAboveAverage(openFile("src/test/resources/multi-lines"))).containsAll(expected));
 
+    }
+    
+    @Test
+    public void shouldReturnEmptyCollection_ByCountryWithResponseLimi_WhenLogFileIsEmpty() throws FileNotFoundException {
+        assertTrue(DataFilterer.filterByCountryWithResponseTimeAboveLimit(openFile("src/test/resources/empty"), "GB", 400).isEmpty());
 
-        assertTrue(DataFilterer.filterByCountry(openFile("src/test/resources/multi-lines"), "US").containsAll(expected));
-        assertTrue(DataFilterer.filterByCountryWithResponseTimeAboveLimit(openFile("src/test/resources/multi-lines"), "GB", 30).contains("1432917066,GB,37"));
     }
 
     @Test
-    public void shoudReturnNull_WhenFilterDataIsNotThereInMultiLineFile() throws FileNotFoundException {
-        assertTrue(DataFilterer.filterByCountry(openFile("src/test/resources/multi-lines"), "TB").isEmpty());
-        assertTrue(DataFilterer.filterByCountryWithResponseTimeAboveLimit(openFile("src/test/resources/multi-lines"), "TB", 30).isEmpty());
-        assertTrue(DataFilterer.filterByCountryWithResponseTimeAboveLimit(openFile("src/test/resources/multi-lines"), "US", 1000).isEmpty());
+    public void shouldReturnFilteredData_ByCountryWithResponseLimit_WhenLogFileIsSingleLine() throws FileNotFoundException {
+        List<String> expected = new ArrayList<>();
+        expected.add("1431592497,GB,200");
+        assertTrue(DataFilterer.filterByCountryWithResponseTimeAboveLimit(openFile("src/test/resources/single-line"), "GB", 100).containsAll(expected));
+
+    }
+
+    @Test
+    public void shouldReturnEmpty_ByCountryWithResponseLimit_WhenLogFileIsSingleLine() throws FileNotFoundException {
+        assertTrue(DataFilterer.filterByCountryWithResponseTimeAboveLimit(openFile("src/test/resources/single-line"), "TB", 100).isEmpty());
+
+    }
+
+    @Test
+    public void shouldReturnFilteredData_ByCountryWithResponseLimit_WhenLogFileIsMultiLine() throws FileNotFoundException {
+        List<String> expected = new ArrayList<>();
+        expected.add("1433190845,US,539");
+        expected.add("1433666287,US,789");
+        expected.add("1432484176,US,850");
+        assertTrue((DataFilterer.filterByCountryWithResponseTimeAboveLimit(openFile("src/test/resources/multi-lines"), "US", 400)).containsAll(expected));
+
+    }
+
+
+    @Test
+    public void shouldReturnEmptyCollection_WithAverageResponse_WhenLogFileIsEmpty() throws FileNotFoundException {
+        assertTrue(DataFilterer.filterByResponseTimeAboveAverage(openFile("src/test/resources/empty")).isEmpty());
+
+    }
+
+    @Test
+    public void shouldReturnEmptyCollection_WithAverageResponse_WhenLogFileIsSingleLine() throws FileNotFoundException {
+        List<String> expected = new ArrayList<>();
+        expected.add("1431592497,GB,200");
+        assertTrue(DataFilterer.filterByResponseTimeAboveAverage(openFile("src/test/resources/single-line")).isEmpty());
+
+    }
+
+    @Test
+    public void shouldReturnDataCollection_WithAverageResponse_WhenLogFileHaveData() throws FileNotFoundException {
+        List<String> expected = new ArrayList<>();
+        expected.add("1433190845,US,539");
+        expected.add("1433666287,US,789");
+        expected.add("1432484176,US,850");
+        assertTrue(DataFilterer.filterByResponseTimeAboveAverage(openFile("src/test/resources/multi-lines")).containsAll(expected));
 
     }
 
